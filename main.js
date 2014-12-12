@@ -3,10 +3,8 @@
  */
 
 var d = document,
-canvas = d.body.appendChild( d.createElement('canvas')),
-ctx = canvas.getContext('2d'),
-w = canvas.width = 200,
-h = canvas.height = 150;
+w = 200,
+h = 100;
 m = Math;
 floor = Math.floor;
 
@@ -40,11 +38,17 @@ var reaction = function(a,b,c,ca,cb,cc){
   nc = nc < 1 ? nc : 1;
   return [na,nb,nc];
 };
+var stage = new PIXI.Stage(0x66FF99);
 
-setInterval(function(){
-  // clear canvas
-  canvas.width = canvas.width;
+// create a renderer instance.
+var renderer = PIXI.autoDetectRenderer(w,h);
+var graphics = new PIXI.Graphics();
+// add it the stage so we see it on our screens..
+stage.addChild(graphics);
+// add the renderer view element to the DOM
+document.body.appendChild(renderer.view);
 
+var update = function(){
   // for every cell
   for(var x = 0; x < w; x++ ){
     for(var y = 0; y < h; y++ ){
@@ -80,12 +84,26 @@ setInterval(function(){
   p = q;
   q = p === 0 ? 1: 0;
 
+};
+
+var animate = function() {
+
+  update();
+  requestAnimFrame( animate );
+  // clear canvas
+  graphics.clear();
+
   // draw the resulting reaction
 
   for (x=0; x < w; x++) {
     for (y=0; y < h; y++) {
-      ctx.fillStyle = 'rgb('+floor(a[x][y][q]*255)+','+floor(b[x][y][q]*255)+','+floor(c[x][y][q]*255)+')';
-      ctx.fillRect(x,y,1,1);
+      graphics.beginFill(floor(a[x][y][q]*0xFF)*0x10000+floor(b[x][y][q]*0xFF)*0x100+floor(c[x][y][q]*0xFF)*0x1);
+      graphics.drawRect(x,y,2,2);
+      graphics.endFill();
     }
   }
-},16);
+
+  // render the stage
+  renderer.render(stage);
+};
+requestAnimFrame( animate );
