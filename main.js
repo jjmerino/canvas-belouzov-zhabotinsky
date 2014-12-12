@@ -41,7 +41,7 @@ var reaction = function(a,b,c,ca,cb,cc){
 var stage = new PIXI.Stage(0x66FF99);
 
 // create a renderer instance.
-var renderer = PIXI.autoDetectRenderer(w,h);
+var renderer = PIXI.autoDetectRenderer(w*2,h*2);
 var graphics = new PIXI.Graphics();
 // add it the stage so we see it on our screens..
 stage.addChild(graphics);
@@ -95,11 +95,32 @@ var animate = function() {
 
   // draw the resulting reaction
 
+  var maxDist = 10;
   for (x=0; x < w; x++) {
-    for (y=0; y < h/2; y++) {
-      graphics.beginFill(floor(a[x][y][q]*0xFF)*0x10000+floor(b[x][y][q]*0xFF)*0x100+floor(c[x][y][q]*0xFF)*0x1);
-      graphics.drawRect(2*x,2*y,2,2);
-      graphics.endFill();
+    var lastColors=[0,0,0];
+    var aggregate = 1;
+    for (y=0; y < h; y++) {
+
+      var newColor = floor(a[x][y][q]*0xFF)*0x10000+floor(b[x][y][q]*0xFF)*0x100+floor(c[x][y][q]*0xFF)*0x1;
+      var newColors = [floor(a[x][y][q]*0xFF), floor(b[x][y][q]*0xFF), floor(c[x][y][q]*0xFF)];
+      var outrange=false;
+      if(m.abs(newColors[0] - lastColors[0])< maxDist && m.abs(newColors[1] - lastColors[1])< maxDist && m.abs(newColors[2] - lastColors[2])< maxDist){
+        aggregate +=1;
+      }else{
+        outrange = true;
+
+      }
+      if(outrange || y === h-1){
+        graphics.beginFill(newColor);
+        graphics.drawRect(2*x,2*(y-aggregate+1),2,2*aggregate);
+        graphics.endFill();
+        aggregate =1;
+      }
+
+      if(aggregate <=2){
+
+      lastColors = newColors;
+      }
     }
   }
 
