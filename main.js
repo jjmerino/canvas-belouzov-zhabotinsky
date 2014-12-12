@@ -4,7 +4,7 @@
 
 var d = document,
 w = 200,
-h = 100;
+h = 150;
 m = Math;
 floor = Math.floor;
 
@@ -96,9 +96,9 @@ var animate = function() {
   // draw the resulting reaction
 
   for (x=0; x < w; x++) {
-    for (y=0; y < h; y++) {
+    for (y=0; y < h/2; y++) {
       graphics.beginFill(floor(a[x][y][q]*0xFF)*0x10000+floor(b[x][y][q]*0xFF)*0x100+floor(c[x][y][q]*0xFF)*0x1);
-      graphics.drawRect(x,y,2,2);
+      graphics.drawRect(2*x,2*y,2,2);
       graphics.endFill();
     }
   }
